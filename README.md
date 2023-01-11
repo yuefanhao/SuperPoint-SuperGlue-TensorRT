@@ -4,6 +4,9 @@ Accelerate SuperPoint and SuperGlue with TensorRT.
 ## Demo
 <img src="image/match_image.jpg" width = "1280" height = "360"  alt="match_image" border="10" />
 
+## RTX3080 Baseline
+* [x] TODO
+
 ## Docker(Recommand)
 ```bash
 docker pull yuefan2022/tensorrt-ubuntu20.04-cuda11.6:latest
