@@ -3,6 +3,7 @@
 //
 #include "super_point.h"
 #include <utility>
+#include <memory>
 #include <unordered_map>
 #include <opencv2/opencv.hpp>
 
@@ -10,8 +11,8 @@ using namespace tensorrt_common;
 using namespace tensorrt_log;
 using namespace tensorrt_buffer;
 
-SuperPoint::SuperPoint(const SuperPointConfig &super_point_config)
-        : super_point_config_(super_point_config), engine_(
+SuperPoint::SuperPoint(SuperPointConfig super_point_config)
+        : super_point_config_(std::move(super_point_config)), engine_(
         nullptr) {
     setReportableSeverity(Logger::Severity::kINTERNAL_ERROR);
 }
@@ -142,6 +143,7 @@ bool SuperPoint::process_input(const BufferManager &buffers, const cv::Mat &imag
     desc_dims_.d[2] = image.rows / 8;
     desc_dims_.d[3] = image.cols / 8;
     auto *host_data_buffer = static_cast<float *>(buffers.getHostBuffer(super_point_config_.input_tensor_names[0]));
+
     for (int row = 0; row < image.rows; ++row) {
         for (int col = 0; col < image.cols; ++col) {
             host_data_buffer[row * image.cols + col] = float(image.at<unsigned char>(row, col)) / 255.0;

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6)
-project(TensorRTBuffer)
+project(tensorrtbuffer)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -12,7 +12,7 @@ include_directories(
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-add_library(TensorRTBuffer SHARED src/logger.cpp)
+add_library(tensorrtbuffer SHARED src/logger.cpp)
 
 
 

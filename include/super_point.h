@@ -12,14 +12,14 @@
 #include <NvOnnxParser.h>
 #include <opencv2/opencv.hpp>
 
-#include "Thirdparty/TensorRTBuffer/include/buffers.h"
-#include "read_configs.h"
+#include "3rdparty/tensorrtbuffer/include/buffers.h"
+#include "read_config.h"
 
 using tensorrt_common::TensorRTUniquePtr;
 
 class SuperPoint {
 public:
-    explicit SuperPoint(const SuperPointConfig &super_point_config);
+    explicit SuperPoint(SuperPointConfig super_point_config);
 
     bool build();
 

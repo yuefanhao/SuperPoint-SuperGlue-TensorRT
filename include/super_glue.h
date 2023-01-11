@@ -12,8 +12,8 @@
 #include <NvOnnxParser.h>
 #include <opencv2/opencv.hpp>
 
-#include "Thirdparty/TensorRTBuffer/include/buffers.h"
-#include "read_configs.h"
+#include "3rdparty/tensorrtbuffer/include/buffers.h"
+#include "read_config.h"
 
 using tensorrt_common::TensorRTUniquePtr;
 
@@ -33,6 +33,12 @@ public:
     void save_engine();
 
     bool deserialize_engine();
+
+    int matching_points(Eigen::Matrix<double, 259, Eigen::Dynamic>& features0, Eigen::Matrix<double, 259,
+                                                                                             Eigen::Dynamic>& features1, std::vector<cv::DMatch>& matches,  bool outlier_rejection=false);
+
+    Eigen::Matrix<double, 259, Eigen::Dynamic> normalize_keypoints(
+        const Eigen::Matrix<double, 259, Eigen::Dynamic> &features, int width, int height);
 
 private:
     SuperGlueConfig superglue_config_;
@@ -66,7 +72,6 @@ private:
                         Eigen::VectorXi &indices1,
                         Eigen::VectorXd &mscores0,
                         Eigen::VectorXd &mscores1);
-
 
 };
 
