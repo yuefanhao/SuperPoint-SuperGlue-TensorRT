@@ -1,4 +1,4 @@
-# SuperPoint SuperGlue Acceleration
+# SuperPoint SuperGlue TensorRT
 Accelerate SuperPoint and SuperGlue with TensorRT.
 
 ## Demo
