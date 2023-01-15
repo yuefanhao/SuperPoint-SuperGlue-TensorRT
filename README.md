@@ -46,3 +46,4 @@ cmake ..
 make
 ./superpointglueacceleration  ../config/config.yaml ../weights/ ${PWD}/../image/image0.png ${PWD}/../image/image1.png
 ```
+If you modified the image size in the config file, you must delete the old .engine file in the weights dir.
