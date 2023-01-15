@@ -2,7 +2,7 @@
 Accelerate SuperPoint and SuperGlue with TensorRT.
 
 ## Demo
-<img src="image/match_image.png" width = "1300" height = "500"  alt="match_image" border="10" />
+<img src="image/match_image.png" width = "640" height = "240"  alt="match_image" border="10" />
 
 * image pair from the freiburg_sequence.
 
