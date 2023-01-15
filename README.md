@@ -29,7 +29,8 @@ docker run -it --env DISPLAY=$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix --p
 * OpenCV
 * EIGEN
 * yaml-cpp
-## Convert Model
+
+## Convert Model(Optional)
 ```bash
 python convert2onnx/convert_superpoint_to_onnx.py --weight_file superpoint_pth_file_path --output_dir superpoint_onnx_file_dir
 python convert2onnx/convert_superglue_to_onnx.py --weight_file superglue_pth_file_path --output_dir superglue_onnx_file_dir
