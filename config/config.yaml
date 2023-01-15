@@ -12,8 +12,8 @@ superpoint:
   dla_core: -1
 
 superglue:
-  image_width: 1280
-  image_height: 720
+  image_width: 320
+  image_height: 240
   input_tensor_names:
     - "keypoints_0"
     - "scores_0"

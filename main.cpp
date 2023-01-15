@@ -8,17 +8,29 @@ int main(int argc, char** argv){
     std::cerr << "./superpointglueacceleration config_path model_dir image0_absolutely_path image1_absolutely_path" << std::endl;
     return 0;
   }
+
   std::string config_path = argv[1];
   std::string model_dir = argv[2];
   std::string image0_path = argv[3];
   std::string image1_path = argv[4];
+
   cv::Mat image0 = cv::imread(image0_path, cv::IMREAD_GRAYSCALE);
   cv::Mat image1 = cv::imread(image1_path, cv::IMREAD_GRAYSCALE);
+
   if(image0.empty() || image1.empty()){
     std::cerr << "Image Path Error." << std::endl;
     return 0;
   }
+
   Configs configs(config_path, model_dir);
+  int width = configs.superglue_config.image_width;
+  int height = configs.superglue_config.image_height;
+
+  cv::resize(image0, image0, cv::Size(width, height));
+  cv::resize(image1, image1, cv::Size(width, height));
+  std::cout << "image0 size: " << image0.cols << "x" << image0.rows << std::endl;
+  std::cout << "image1 size: " << image1.cols << "x" << image1.rows << std::endl;
+
   std::cout << "Building Engine......" << std::endl;
   auto superpoint = std::make_shared<SuperPoint>(configs.superpoint_config);
   if (!superpoint->build()){
@@ -30,8 +42,8 @@ int main(int argc, char** argv){
     std::cerr << "Error in SuperGlue building" << std::endl;
     return 0;
   }
-
   std::cout << "SuperPoint and SuperGlue Build Success." << std::endl;
+  
   Eigen::Matrix<double, 259, Eigen::Dynamic> feature_points0, feature_points1;
   auto start = std::chrono::high_resolution_clock::now();
   if(!superpoint->infer(image0, feature_points0)){
@@ -40,6 +52,7 @@ int main(int argc, char** argv){
   }
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "image0 feature points: " << feature_points0.cols() << std::endl;
   std::cout << "Infer First Image Cost " << duration.count() << " MS" << std::endl;
   start = std::chrono::high_resolution_clock::now();
   if(!superpoint->infer(image1, feature_points1)){
@@ -48,13 +61,16 @@ int main(int argc, char** argv){
   }
   end = std::chrono::high_resolution_clock::now();
   duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "image1 feature points: " << feature_points1.cols() << std::endl;
   std::cout << "Infer Second Image Cost " << duration.count() << " MS" << std::endl;
+  
   std::vector<cv::DMatch> superglue_matches;
   start = std::chrono::high_resolution_clock::now();
   superglue->matching_points(feature_points0, feature_points1, superglue_matches);
   end = std::chrono::high_resolution_clock::now();
   duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   std::cout << "Match Image Cost " << duration.count() << " MS" << std::endl;
+  
   cv::Mat match_image;
   std::vector<cv::KeyPoint> keypoints0, keypoints1;
   for(size_t i = 0; i < feature_points0.cols(); ++i){
@@ -69,8 +85,9 @@ int main(int argc, char** argv){
     double y = feature_points1(2, i);
     keypoints1.emplace_back(x, y, 8, -1, score);
   }
+  
   cv::drawMatches(image0, keypoints0, image1, keypoints1, superglue_matches, match_image);
-  cv::imwrite("match_image.jpg", match_image);
+  cv::imwrite("match_image.png", match_image);
   //  visualize
   //  cv::imshow("match_image", match_image);
   //  cv::waitKey(-1);

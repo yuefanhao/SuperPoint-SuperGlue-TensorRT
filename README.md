@@ -2,14 +2,20 @@
 Accelerate SuperPoint and SuperGlue with TensorRT.
 
 ## Demo
-<img src="image/match_image.jpg" width = "1280" height = "360"  alt="match_image" border="10" />
+<img src="image/match_image.png" width = "1280" height = "480"  alt="match_image" border="10" />
+
+* image pair from the freiburg_sequence.
 
 ## Baseline
-| Image Size: 1280 x 720 | RTX3090 | RTX3080 | Quadro P620 | Jetson Nano | Jetson TX2 NX |  
+
+| Image Size: 320 x 240  | RTX3090 | RTX3080 | Quadro P620 | Jetson Nano | Jetson TX2 NX |  
 |:----------------------:|:-------:|:-------:|:-----------:|:-----------:|:-------------:|
-| SuperPoint (500 points)|         |         | 206 ms      |             |               |
-| SuperPoint (399 points)|         |         | 149 ms      |             |               |
-| SuperGlue (256 dims)   |         |         | 1498 ms     |             |               |
+| SuperPoint (247 points)|         |         |             |             |               |
+| SuperPoint (237 points)|         |         |             |             |               |
+| SuperGlue (256 dims)   |         |         |             |             |               |
+
+
+- [] Compare the performance and speed with the offical [SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork).
 
 ## Docker(Recommand)
 ```bash
