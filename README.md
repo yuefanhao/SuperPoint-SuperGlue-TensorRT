@@ -15,7 +15,7 @@ Accelerate SuperPoint and SuperGlue with TensorRT.
 | SuperGlue (256 dims)   |         |         |             |             |               |
 
 
-- [] Compare the performance and speed with the offical [SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork).
+- [ ] Compare the performance and speed with the offical [SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork).
 
 ## Docker(Recommand)
 ```bash
