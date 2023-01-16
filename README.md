@@ -4,7 +4,7 @@ Accelerate SuperPoint and SuperGlue with TensorRT.
 ## Demo
 <img src="image/superpoint_superglue_tensorrt.gif" width = "640" height = "240"  alt="match_image" border="10" />
 
-* Image pairs are from the freiburg_sequence.
+* This demo was tested on the Quadro P620 GPU.
 
 ## Baseline
 
@@ -13,7 +13,6 @@ Accelerate SuperPoint and SuperGlue with TensorRT.
 | SuperPoint (250 points)|         | 13.61 MS    | 
 | SuperPoint (257 points)|         | 13.32 MS    | 
 | SuperGlue (256 dims)   |         | 58.83 MS    |
-| Overall                |         | 85.76 MS    | 
 
 ## Docker(Recommand)
 ```bash
