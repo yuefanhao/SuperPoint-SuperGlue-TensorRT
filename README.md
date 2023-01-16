@@ -79,3 +79,6 @@ std::vector<cv::DMatch> superglue_matches;
 superglue->matching_points(feature_points0, feature_points1, superglue_matches);
  
 ```
+
+## Acknowledgements
+[SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork) [SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork) [TensorRT](https://github.com/NVIDIA/TensorRT)
