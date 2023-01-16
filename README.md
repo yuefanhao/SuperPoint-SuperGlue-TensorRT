@@ -8,11 +8,12 @@ Accelerate SuperPoint and SuperGlue with TensorRT.
 
 ## Baseline
 
-| Image Size: 320 x 240  | RTX3090 | RTX3080 | Quadro P620 | Jetson Nano | Jetson TX2 NX |  
-|:----------------------:|:-------:|:-------:|:-----------:|:-----------:|:-------------:|
-| SuperPoint (250 points)|         |         | 13.61 MS    |             |               |
-| SuperPoint (257 points)|         |         | 13.32 MS    |             |               |
-| SuperGlue (256 dims)   |         |         | 58.83 MS    |             |               |
+| Image Size: 320 x 240  | RTX3080 | Quadro P620 | 
+|:----------------------:|:-------:|:-----------:|
+| SuperPoint (250 points)|         | 13.61 MS    | 
+| SuperPoint (257 points)|         | 13.32 MS    | 
+| SuperGlue (256 dims)   |         | 58.83 MS    |
+| Overall                |         | 85.76 MS    | 
 
 ## Docker(Recommand)
 ```bash
