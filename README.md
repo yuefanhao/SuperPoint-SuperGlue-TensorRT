@@ -14,6 +14,7 @@ Accelerate SuperPoint and SuperGlue with TensorRT.
 | SuperPoint (237 points)|         |         |             |             |               |
 | SuperGlue (256 dims)   |         |         |             |             |               |
 
+* When first run the inference, there will cost a lot of time in engine buiding and context init. So the speed baseline will only statistic except the first.
 
 - [ ] Compare the performance and speed with the offical [SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork).
 
