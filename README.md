@@ -21,9 +21,9 @@ docker run -it --env DISPLAY=$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix --p
 ```
 
 ## Environment Required
-* CUDA
-* TensorRT
-* OpenCV
+* CUDA==11.6
+* TensorRT==8.4.1.5
+* OpenCV>=4.0
 * EIGEN
 * yaml-cpp
 
