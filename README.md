@@ -4,19 +4,16 @@ Accelerate SuperPoint and SuperGlue with TensorRT.
 ## Demo
 <img src="image/match_image.png" width = "640" height = "240"  alt="match_image" border="10" />
 
-* image pairs are from the freiburg_sequence.
+* Image pairs are from the freiburg_sequence.
 
-## Baseline(ToDo)
+## Baseline
 
-| Image Size: 320 x 240  | RTX3090 | RTX3080 | Quadro P620 | Jetson Nano | Jetson TX2 NX |  
-|:----------------------:|:-------:|:-------:|:-----------:|:-----------:|:-------------:|
-| SuperPoint (250 points)|         |         | 13.61 MS    |             |               |
-| SuperPoint (257 points)|         |         | 13.32 MS    |             |               |
-| SuperGlue (256 dims)   |         |         | 58.83 MS    |             |               |
-
-* When first run the inference, there will cost a lot of time in engine buiding and context init. So the speed baseline will only statistic except the first.
-
-- [ ] Compare the performance and speed with the offical [SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork).
+| Image Size: 320 x 240  | RTX3080 | Quadro P620 | 
+|:----------------------:|:-------:|:-----------:|
+| SuperPoint (250 points)|         | 13.61 MS    | 
+| SuperPoint (257 points)|         | 13.32 MS    | 
+| SuperGlue (256 dims)   |         | 58.83 MS    |
+| Overall                |         | 85.76 MS    | 
 
 ## Docker(Recommand)
 ```bash
@@ -47,4 +44,4 @@ cmake ..
 make
 ./superpointglueacceleration  ../config/config.yaml ../weights/ ${PWD}/../image/image0.png ${PWD}/../image/image1.png
 ```
-If you modified the image size in the config file, you must delete the old .engine file in the weights dir.
+If you modified the image size in the config file, you should delete the old .engine file in the weights dir.
