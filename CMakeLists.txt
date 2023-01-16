@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(superpointglueacceleration)
+project(superpointglue)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE "release")
@@ -37,5 +37,8 @@ target_link_libraries(${PROJECT_NAME}_lib
   tensorrtbuffer
 )
 
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
+add_executable(${PROJECT_NAME}_image inference_image.cpp)
+add_executable(${PROJECT_NAME}_sequence inference_sequence.cpp)
+
+target_link_libraries(${PROJECT_NAME}_image ${PROJECT_NAME}_lib)
+target_link_libraries(${PROJECT_NAME}_sequence  ${PROJECT_NAME}_lib)
