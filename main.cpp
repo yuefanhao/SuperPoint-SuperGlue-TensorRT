@@ -18,7 +18,7 @@ int main(int argc, char** argv){
   cv::Mat image1 = cv::imread(image1_path, cv::IMREAD_GRAYSCALE);
 
   if(image0.empty() || image1.empty()){
-    std::cerr << "Input Image Is Empty. Please check the image path." << std::endl;
+    std::cerr << "Input image is empty. Please check the image path." << std::endl;
     return 0;
   }
 
@@ -28,8 +28,8 @@ int main(int argc, char** argv){
 
   cv::resize(image0, image0, cv::Size(width, height));
   cv::resize(image1, image1, cv::Size(width, height));
-  std::cout << "image0 size: " << image0.cols << "x" << image0.rows << std::endl;
-  std::cout << "image1 size: " << image1.cols << "x" << image1.rows << std::endl;
+  std::cout << "First image size: " << image0.cols << "x" << image0.rows << std::endl;
+  std::cout << "Second image size: " << image1.cols << "x" << image1.rows << std::endl;
 
   std::cout << "Building Inference Engine......" << std::endl;
   auto superpoint = std::make_shared<SuperPoint>(configs.superpoint_config);
@@ -42,34 +42,51 @@ int main(int argc, char** argv){
     std::cerr << "Error in SuperGlue building engine. Please check your onnx model path." << std::endl;
     return 0;
   }
-  std::cout << "SuperPoint and SuperGlue Inference Engine Build Success." << std::endl;
+  std::cout << "SuperPoint and SuperGlue inference engine build success." << std::endl;
   
   Eigen::Matrix<double, 259, Eigen::Dynamic> feature_points0, feature_points1;
-  auto start = std::chrono::high_resolution_clock::now();
-  if(!superpoint->infer(image0, feature_points0)){
-    std::cerr << "Failed when extracting features from first image." << std::endl;
-    return 0;
-  }
-  auto end = std::chrono::high_resolution_clock::now();
-  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout << "image0 feature points: " << feature_points0.cols() << std::endl;
-  std::cout << "Infer First Image Cost " << duration.count() << " MS" << std::endl;
-  start = std::chrono::high_resolution_clock::now();
-  if(!superpoint->infer(image1, feature_points1)){
-    std::cerr << "Failed when extracting features from second image." << std::endl;
-    return 0;
-  }
-  end = std::chrono::high_resolution_clock::now();
-  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout << "image1 feature points: " << feature_points1.cols() << std::endl;
-  std::cout << "Infer Second Image Cost " << duration.count() << " MS" << std::endl;
-  
   std::vector<cv::DMatch> superglue_matches;
-  start = std::chrono::high_resolution_clock::now();
-  superglue->matching_points(feature_points0, feature_points1, superglue_matches);
-  end = std::chrono::high_resolution_clock::now();
-  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout << "Match Image Cost " << duration.count() << " MS" << std::endl;
+
+  double image0_tcount = 0;
+  double image1_tcount = 0;
+  double match_tcount = 0;
+  std::cout << "SuperPoint and SuperGlue test in 100 times." << std::endl;
+  for (int i = 0; i <= 100; ++i){
+    std::cout << "---------------------------------------------------------" << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    if(!superpoint->infer(image0, feature_points0)){
+      std::cerr << "Failed when extracting features from first image." << std::endl;
+      return 0;
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    if(i > 0){
+      std::cout << "First image feature points number: " << feature_points0.cols() << std::endl;
+      image0_tcount += duration.count();
+      std::cout << "First image infer cost " << image0_tcount / i << " MS" << std::endl;
+    }
+    start = std::chrono::high_resolution_clock::now();
+    if(!superpoint->infer(image1, feature_points1)){
+      std::cerr << "Failed when extracting features from second image." << std::endl;
+      return 0;
+    }
+    end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    if(i > 0){
+      std::cout << "Second image feature points number: " << feature_points1.cols() << std::endl;
+      image1_tcount += duration.count();
+      std::cout << "Second image infer cost " << image1_tcount / i << " MS" << std::endl;
+    }
+    
+    start = std::chrono::high_resolution_clock::now();
+    superglue->matching_points(feature_points0, feature_points1, superglue_matches);
+    end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    if(i > 0){
+      match_tcount += duration.count();
+      std::cout << "Match image cost " << match_tcount / i << " MS" << std::endl;
+    }
+  }
   
   cv::Mat match_image;
   std::vector<cv::KeyPoint> keypoints0, keypoints1;

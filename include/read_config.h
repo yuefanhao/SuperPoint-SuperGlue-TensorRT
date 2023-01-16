@@ -60,9 +60,9 @@ struct Configs{
   SuperGlueConfig superglue_config;
 
   Configs(const std::string& config_file, const std::string& model_dir){
-    std::cout << "config_file = " << config_file << std::endl;
+    std::cout << "Config file is " << config_file << std::endl;
     if(!FileExists(config_file)){
-      std::cout << "config file: " << config_file << " doesn't exist" << std::endl;
+      std::cerr << "Config file: " << config_file << " doesn't exist." << std::endl;
       return;
     }
     YAML::Node file_node = YAML::LoadFile(config_file);
