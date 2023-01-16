@@ -20,21 +20,21 @@ docker pull yuefan2022/tensorrt-ubuntu20.04-cuda11.6:latest
 docker run -it --env DISPLAY=$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix --privileged --runtime nvidia --gpus all --volume ${PWD}:/workspace --workdir /workspace --name tensorrt yuefan2022/tensorrt-ubuntu20.04-cuda11.6:latest /bin/bash
 ```
 
-## Environment Required
+## Environment required
 * CUDA==11.6
 * TensorRT==8.4.1.5
 * OpenCV>=4.0
 * EIGEN
 * yaml-cpp
 
-## Convert Model(Optional)
+## Convert model(Optional)
 The converted model is already provided in the [weights](./weights) folder, if you are using the pretrained model officially provided by [SuperPoint and SuperGlue](https://github.com/magicleap/SuperGluePretrainedNetwork), you do not need to go through this step.
 ```bash
 python convert2onnx/convert_superpoint_to_onnx.py --weight_file superpoint_pth_file_path --output_dir superpoint_onnx_file_dir
 python convert2onnx/convert_superglue_to_onnx.py --weight_file superglue_pth_file_path --output_dir superglue_onnx_file_dir
 ```
 
-## Build and Run
+## Build and run
 ```bash
 git clone https://github.com/yuefanhao/SuperPointSuperGlueAcceleration.git
 cd SuperPointSuperGlueAcceleration
@@ -48,3 +48,34 @@ make
 ./superpointglue_sequence  ../config/config.yaml ../weights/ ${PWD}/../image/freiburg_sequence/ ${PWD}/../image/freiburg_sequence/match_images/
 ```
 The default image size param is 320x240, if you need to modify the image size in the config file, you should delete the old .engine file in the weights dir.
+
+## Sample
+```c++
+#include "super_point.h"
+#include "super_glue.h"
+
+// read image
+cv::Mat image0 = cv::imread("../image/image0.png", cv::IMREAD_GRAYSCALE);
+cv::Mat image1 = cv::imread("../image/image1.png", cv::IMREAD_GRAYSCALE);
+
+// read config from file
+Configs configs("../config/config.yaml", "../weights/");
+
+// create superpoint and superglue
+auto superpoint = std::make_shared<SuperPoint>(configs.superpoint_config);
+auto superglue = std::make_shared<SuperGlue>(configs.superglue_config);
+
+// build engine
+superpoint->build();
+superglue->build();
+
+// infer superpoint
+Eigen::Matrix<double, 259, Eigen::Dynamic> feature_points0, feature_points1;
+superpoint->infer(image0, feature_points0);
+superpoint->infer(image1, feature_points1)
+
+// infer superglue
+std::vector<cv::DMatch> superglue_matches;
+superglue->matching_points(feature_points0, feature_points1, superglue_matches);
+ 
+```
