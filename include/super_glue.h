@@ -30,15 +30,16 @@ public:
                Eigen::VectorXd &mscores0,
                Eigen::VectorXd &mscores1);
 
+
+    int matching_points(Eigen::Matrix<double, 259, Eigen::Dynamic> &features0, Eigen::Matrix<double, 259,
+            Eigen::Dynamic> &features1, std::vector<cv::DMatch> &matches, bool outlier_rejection = false);
+
+    Eigen::Matrix<double, 259, Eigen::Dynamic> normalize_keypoints(
+            const Eigen::Matrix<double, 259, Eigen::Dynamic> &features, int width, int height);
+
     void save_engine();
 
     bool deserialize_engine();
-
-    int matching_points(Eigen::Matrix<double, 259, Eigen::Dynamic>& features0, Eigen::Matrix<double, 259,
-                                                                                             Eigen::Dynamic>& features1, std::vector<cv::DMatch>& matches,  bool outlier_rejection=false);
-
-    Eigen::Matrix<double, 259, Eigen::Dynamic> normalize_keypoints(
-        const Eigen::Matrix<double, 259, Eigen::Dynamic> &features, int width, int height);
 
 private:
     SuperGlueConfig superglue_config_;

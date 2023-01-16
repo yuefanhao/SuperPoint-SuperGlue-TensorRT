@@ -139,7 +139,6 @@ bool SuperGlue::infer(const Eigen::Matrix<double, 259, Eigen::Dynamic> &features
                       Eigen::VectorXi &indices1,
                       Eigen::VectorXd &mscores0,
                       Eigen::VectorXd &mscores1) {
-    // Create RAII buffer manager object
     if (!context_) {
         context_ = TensorRTUniquePtr<nvinfer1::IExecutionContext>(engine_->createExecutionContext());
         if (!context_) {
@@ -187,7 +186,6 @@ bool SuperGlue::infer(const Eigen::Matrix<double, 259, Eigen::Dynamic> &features
     }
     buffers.copyOutputToHost();
 
-    // Verify results
     if (!process_output(buffers, indices0, indices1, mscores0, mscores1)) {
         return false;
     }
@@ -446,9 +444,9 @@ bool SuperGlue::process_output(const BufferManager &buffers,
     int scores_map_h = output_scores_dims_.d[1];
     int scores_map_w = output_scores_dims_.d[2];
     auto *scores = new float[(scores_map_h + 1) * (scores_map_w + 1)];
-    //log_optimal_transport(output_score, scores, scores_map_h, scores_map_w);
-    //scores_map_h = scores_map_h + 1;
-    //scores_map_w = scores_map_w + 1;
+    // log_optimal_transport(output_score, scores, scores_map_h, scores_map_w);
+    // scores_map_h = scores_map_h + 1;
+    // scores_map_w = scores_map_w + 1;
     decode(output_score, scores_map_h, scores_map_w, indices0_, indices1_, mscores0_, mscores1_);
     indices0.resize(indices0_.size());
     indices1.resize(indices1_.size());
@@ -519,7 +517,6 @@ int SuperGlue::matching_points(Eigen::Matrix<double, 259, Eigen::Dynamic>& featu
     }
   }
 
-  // reject outliers
   if(outlier_rejection){
     std::vector<uchar> inliers;
     cv::findFundamentalMat(points0, points1, cv::FM_RANSAC, 3, 0.99, inliers);

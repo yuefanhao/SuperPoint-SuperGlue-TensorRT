@@ -1,8 +1,8 @@
 #ifndef READ_CONFIG_H_
 #define READ_CONFIG_H_
 
+#include "utils.h"
 #include <iostream>
-#include <sys/stat.h>
 #include <yaml-cpp/yaml.h>
 
 
@@ -27,31 +27,6 @@ struct SuperGlueConfig {
   std::string engine_file;
 };
 
-static bool FileExists(const std::string& file) {
-  struct stat file_status{};
-  if (stat(file.c_str(), &file_status) == 0 &&
-      (file_status.st_mode & S_IFREG)) {
-    return true;
-  }
-  return false;
-}
-
-static void ConcatenateFolderAndFileName0(
-    const std::string& folder, const std::string& file_name,
-    std::string* path) {
-  *path = folder;
-  if (path->back() != '/') {
-    *path += '/';
-  }
-  *path = *path + file_name;
-}
-
-static std::string ConcatenateFolderAndFileName(
-    const std::string& folder, const std::string& file_name) {
-  std::string path;
-  ConcatenateFolderAndFileName0(folder, file_name, &path);
-  return path;
-}
 
 struct Configs{
   std::string model_dir;
@@ -62,7 +37,7 @@ struct Configs{
   Configs(const std::string& config_file, const std::string& model_dir){
     std::cout << "Config file is " << config_file << std::endl;
     if(!FileExists(config_file)){
-      std::cerr << "Config file: " << config_file << " doesn't exist." << std::endl;
+      std::cerr << "Config file " << config_file << " doesn't exist." << std::endl;
       return;
     }
     YAML::Node file_node = YAML::LoadFile(config_file);

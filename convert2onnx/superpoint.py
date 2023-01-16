@@ -113,11 +113,12 @@ default_config = {
 
 class SuperPoint(nn.Module):
     """SuperPoint Convolutional Detector and Descriptor
+
     SuperPoint: Self-Supervised Interest Point Detection and
     Description. Daniel DeTone, Tomasz Malisiewicz, and Andrew
     Rabinovich. In CVPRW, 2019. https://arxiv.org/abs/1712.07629
-    """
 
+    """
     # default_config = {
     #     'descriptor_dim': 256,
     #     'nms_radius': 4,
@@ -210,5 +211,11 @@ class SuperPoint(nn.Module):
         # Extract descriptors
         # descriptors = [sample_descriptors(k[None], d[None], 8)[0]
         #                for k, d in zip(keypoints, descriptors)]
+
+        # return {
+        #     'keypoints': keypoints,
+        #     'scores': scores,
+        #     'descriptors': descriptors,
+        # }
 
         return scores, descriptors

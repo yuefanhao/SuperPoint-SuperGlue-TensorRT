@@ -224,9 +224,9 @@ int clip(int val, int max) {
 
 void grid_sample(const float *input, std::vector<std::vector<double>> &grid,
                  std::vector<std::vector<double>> &output, int dim, int h, int w) {
-    // descriptors 1x256x60x106
-    // keypoints 1x1xnumberx2
-    // out 1x256x1xnumber
+    // descriptors 1, 256, image_height/8, image_width/8
+    // keypoints 1, 1, number, 2
+    // out 1, 256, 1, number
     for (auto &g : grid) {
         double ix = ((g[0] + 1) / 2) * (w - 1);
         double iy = ((g[1] + 1) / 2) * (h - 1);
@@ -250,8 +250,8 @@ void grid_sample(const float *input, std::vector<std::vector<double>> &grid,
 
         std::vector<double> descriptor;
         for (int i = 0; i < dim; ++i) {
-            // 256x60x106 whd
-            // x * Height * Depth + y * Depth + z
+            // 256x60x106 dhw
+            // x * height * depth + y * depth + z
             float nw_val = input[i * h * w + iy_nw * w + ix_nw];
             float ne_val = input[i * h * w + iy_ne * w + ix_ne];
             float sw_val = input[i * h * w + iy_sw * w + ix_sw];
@@ -295,7 +295,7 @@ bool SuperPoint::process_output(const BufferManager &buffers, Eigen::Matrix<doub
                           super_point_config_.keypoint_threshold);
     remove_borders(keypoints_, scores_vec, super_point_config_.remove_borders, semi_feature_map_h, semi_feature_map_w);
     top_k_keypoints(keypoints_, scores_vec, super_point_config_.max_keypoints);
-    // std::cout << "super point number is " << std::to_string(scores_vec.size()) << std::endl;
+    
     features.resize(259, scores_vec.size());
     int desc_feature_dim = desc_dims_.d[1];
     int desc_feature_map_h = desc_dims_.d[2];

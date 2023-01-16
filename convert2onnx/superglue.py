@@ -62,14 +62,14 @@ def MLP(channels: List[int], do_bn: bool = True) -> nn.Module:
     return nn.Sequential(*layers)
 
 
-# def normalize_keypoints(kpts, image_shape):
-#     """ Normalize keypoints locations based on image image_shape"""
-#     _, _, height, width = image_shape
-#     one = kpts.new_tensor(1)
-#     size = torch.stack([one*width, one*height])[None]
-#     center = size / 2
-#     scaling = size.max(1, keepdim=True).values * 0.7
-#     return (kpts - center[:, None, :]) / scaling[:, None, :]
+def normalize_keypoints(kpts, image_shape):
+    """ Normalize keypoints locations based on image image_shape"""
+    _, _, height, width = image_shape
+    one = kpts.new_tensor(1)
+    size = torch.stack([one*width, one*height])[None]
+    center = size / 2
+    scaling = size.max(1, keepdim=True).values * 0.7
+    return (kpts - center[:, None, :]) / scaling[:, None, :]
 
 
 class KeypointEncoder(nn.Module):
@@ -90,37 +90,6 @@ def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor) -> Tu
     scores = torch.einsum('bdhn,bdhm->bhnm', query, key) / dim ** .5
     prob = torch.nn.functional.softmax(scores, dim=-1)
     return torch.einsum('bhnm,bdhm->bdhn', prob, value), prob
-
-
-# def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-#     batch = query.shape[0]
-#     dim = query.shape[1]
-#     scores = torch.bmm(query[0, :, :, :].permute(1, 2, 0), key[0, :, :, :].permute(1, 0, 2))
-#     # scores = scores.unsqueeze(dim=0)
-#     if batch == 1:
-#         scores = scores.unsqueeze(dim=0)
-#     else:
-#         for i in range(1, query.shape[0]):
-#             scores = torch.stack((scores, torch.bmm(query[i, :, :, :].permute(1, 2, 0),
-#                                                     key[i, :, :, :].permute(1, 0, 2))), dim=0)
-#     scores = scores / dim ** .5
-#     # scores = torch.einsum('bdhn,bdhm->bhnm', query, key) / dim**.5
-#     prob = torch.nn.functional.softmax(scores, dim=-1)
-
-#     result = torch.bmm(prob[0, :, :, :], value[0, :, :, :].permute(1, 2, 0)).permute(2, 0, 1)
-#     # result = result.unsqueeze(dim=0)
-
-#     if batch == 1:
-#         result = result.unsqueeze(dim=0)
-#     else:
-#         for i in range(1, prob.shape[0]):
-#             result = torch.stack((result, torch.bmm(prob[i, :, :, :],
-#                                                     value[i, :, :, :].permute(1, 2, 0)).permute(2,
-#                                                                                                 0,
-#                                                                                                 1)),
-#                                  dim=0)
-#     # return torch.einsum('bhnm,bdhm->bdhn', prob, value), prob
-#     return result, prob
 
 
 class MultiHeadedAttention(nn.Module):
@@ -205,8 +174,8 @@ def log_optimal_transport(scores: torch.Tensor, alpha: torch.Tensor, iters: int)
     return Z
 
 
-# def arange_like(x, dim: int):
-#     return x.new_ones(x.shape[dim]).cumsum(0) - 1  # traceable in 1.1
+def arange_like(x, dim: int):
+    return x.new_ones(x.shape[dim]).cumsum(0) - 1  # traceable in 1.1
 
 
 default_config = {
@@ -219,6 +188,7 @@ default_config = {
 
 class SuperGlue(nn.Module):
     """SuperGlue feature matching middle-end
+
     Given two sets of keypoints and locations, we determine the
     correspondences by:
       1. Keypoint Encoding (normalization + visual feature and location fusion)
@@ -226,12 +196,14 @@ class SuperGlue(nn.Module):
       3. Final projection layer
       4. Optimal Transport Layer (a differentiable Hungarian matching algorithm)
       5. Thresholding matrix based on mutual exclusivity and a match_threshold
+
     The correspondence ids use -1 to indicate non-matching points.
+
     Paul-Edouard Sarlin, Daniel DeTone, Tomasz Malisiewicz, and Andrew
     Rabinovich. SuperGlue: Learning Feature Matching with Graph Neural
     Networks. In CVPR, 2020. https://arxiv.org/abs/1911.11763
-    """
 
+    """
     # default_config = {
     #     'descriptor_dim': 256,
     #     'weights': 'indoor',
