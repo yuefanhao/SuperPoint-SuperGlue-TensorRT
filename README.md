@@ -10,9 +10,9 @@ Accelerate SuperPoint and SuperGlue with TensorRT.
 
 | Image Size: 320 x 240  | RTX3090 | RTX3080 | Quadro P620 | Jetson Nano | Jetson TX2 NX |  
 |:----------------------:|:-------:|:-------:|:-----------:|:-----------:|:-------------:|
-| SuperPoint (247 points)|         |         |             |             |               |
-| SuperPoint (237 points)|         |         |             |             |               |
-| SuperGlue (256 dims)   |         |         |             |             |               |
+| SuperPoint (250 points)|         |         | 13.61 MS    |             |               |
+| SuperPoint (257 points)|         |         | 13.32 MS    |             |               |
+| SuperGlue (256 dims)   |         |         | 58.83 MS    |             |               |
 
 * When first run the inference, there will cost a lot of time in engine buiding and context init. So the speed baseline will only statistic except the first.
 
