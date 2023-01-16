@@ -49,7 +49,7 @@ make
 ```
 The default image size param is 320x240, if you need to modify the image size in the config file, you should delete the old .engine file in the weights dir.
 
-## Sample
+## Samples
 ```c++
 #include "super_point.h"
 #include "super_glue.h"
