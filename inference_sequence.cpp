@@ -24,7 +24,7 @@ int main(int argc, char** argv){
     int width = configs.superglue_config.image_width;
     int height = configs.superglue_config.image_height;
 
-    std::cout << "Building Inference Engine......" << std::endl;
+    std::cout << "Building inference engine......" << std::endl;
     auto superpoint = std::make_shared<SuperPoint>(configs.superpoint_config);
     if (!superpoint->build()) {
         std::cerr << "Error in SuperPoint building engine. Please check your onnx model path." << std::endl;
