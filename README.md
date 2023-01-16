@@ -10,9 +10,10 @@ SuperPoint and SuperGlue with TensorRT.
 
 | Image Size: 320 x 240  | RTX3080 | Quadro P620 | 
 |:----------------------:|:-------:|:-----------:|
-| SuperPoint (250 points)|         | 13.61 MS    | 
-| SuperPoint (257 points)|         | 13.32 MS    | 
-| SuperGlue (256 dims)   |         | 58.83 MS    |
+| SuperPoint (250 points)| 1.04 MS | 13.61 MS    | 
+| SuperPoint (257 points)| 1.03 MS | 13.32 MS    | 
+| SuperGlue (256 dims)   | 7.47 MS | 58.83 MS    |
+| FPS (superpoint one time + superglue one time)   | $\approx$ 117 FPS | $\approx$ 13 FPS    |
 
 ## Docker(Recommand)
 ```bash
