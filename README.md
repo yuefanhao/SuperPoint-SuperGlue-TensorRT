@@ -4,7 +4,7 @@ Accelerate SuperPoint and SuperGlue with TensorRT.
 ## Demo
 <img src="image/match_image.png" width = "640" height = "240"  alt="match_image" border="10" />
 
-* image pairs are from the freiburg_sequence.
+* Image pairs are from the freiburg_sequence.
 
 ## Baseline
 
@@ -43,4 +43,4 @@ cmake ..
 make
 ./superpointglueacceleration  ../config/config.yaml ../weights/ ${PWD}/../image/image0.png ${PWD}/../image/image1.png
 ```
-If you modified the image size in the config file, you must delete the old .engine file in the weights dir.
+If you modified the image size in the config file, you should delete the old .engine file in the weights dir.
