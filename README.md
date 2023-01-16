@@ -1,5 +1,5 @@
 # SuperPoint SuperGlue TensorRT
-Accelerate SuperPoint and SuperGlue with TensorRT.
+SuperPoint and SuperGlue with TensorRT.
 
 ## Demo
 <img src="image/superpoint_superglue_tensorrt.gif" width = "640" height = "240"  alt="match_image" border="10" />
