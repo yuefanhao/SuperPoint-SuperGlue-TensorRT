@@ -36,7 +36,7 @@ int main(int argc, char** argv){
   std::cout << "First image size: " << image0.cols << "x" << image0.rows << std::endl;
   std::cout << "Second image size: " << image1.cols << "x" << image1.rows << std::endl;
 
-  std::cout << "Building Inference Engine......" << std::endl;
+  std::cout << "Building inference engine......" << std::endl;
   auto superpoint = std::make_shared<SuperPoint>(configs.superpoint_config);
   if (!superpoint->build()){
     std::cerr << "Error in SuperPoint building engine. Please check your onnx model path." << std::endl;
