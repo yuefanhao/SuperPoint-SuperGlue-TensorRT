@@ -41,6 +41,9 @@ mkdir build
 cd build
 cmake ..
 make
-./superpointglueacceleration  ../config/config.yaml ../weights/ ${PWD}/../image/image0.png ${PWD}/../image/image1.png
+# test on image pairs 100 times, the output image will be saved in the build dir
+./superpointglue_image  ../config/config.yaml ../weights/ ${PWD}/../image/image0.png ${PWD}/../image/image1.png
+# test on the folder with image sequence, output images will be saved in the param assigned dir
+./superpointglue_sequence  ../config/config.yaml ../weights/ ${PWD}/../image/freiburg_sequence/ ${PWD}/../image/freiburg_sequence/match_images/
 ```
 If you modified the image size in the config file, you should delete the old .engine file in the weights dir.
