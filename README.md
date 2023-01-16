@@ -38,7 +38,7 @@ python convert2onnx/convert_superglue_to_onnx.py --weight_file superglue_pth_fil
 ## Build and run
 ```bash
 git clone https://github.com/yuefanhao/SuperPointSuperGlueAcceleration.git
-cd SuperPointSuperGlueAcceleration
+cd SuperPoint-SuperGlue-TensorRT
 mkdir build
 cd build
 cmake ..
