@@ -18,7 +18,7 @@ int main(int argc, char** argv){
   cv::Mat image1 = cv::imread(image1_path, cv::IMREAD_GRAYSCALE);
 
   if(image0.empty() || image1.empty()){
-    std::cerr << "Image Path Error." << std::endl;
+    std::cerr << "Input Image Is Empty. Please check the image path." << std::endl;
     return 0;
   }
 
@@ -31,23 +31,23 @@ int main(int argc, char** argv){
   std::cout << "image0 size: " << image0.cols << "x" << image0.rows << std::endl;
   std::cout << "image1 size: " << image1.cols << "x" << image1.rows << std::endl;
 
-  std::cout << "Building Engine......" << std::endl;
+  std::cout << "Building Inference Engine......" << std::endl;
   auto superpoint = std::make_shared<SuperPoint>(configs.superpoint_config);
   if (!superpoint->build()){
-    std::cerr << "Error in SuperPoint building" << std::endl;
+    std::cerr << "Error in SuperPoint building engine. Please check your onnx model path." << std::endl;
     return 0;
   }
   auto superglue = std::make_shared<SuperGlue>(configs.superglue_config);
   if (!superglue->build()){
-    std::cerr << "Error in SuperGlue building" << std::endl;
+    std::cerr << "Error in SuperGlue building engine. Please check your onnx model path." << std::endl;
     return 0;
   }
-  std::cout << "SuperPoint and SuperGlue Build Success." << std::endl;
+  std::cout << "SuperPoint and SuperGlue Inference Engine Build Success." << std::endl;
   
   Eigen::Matrix<double, 259, Eigen::Dynamic> feature_points0, feature_points1;
   auto start = std::chrono::high_resolution_clock::now();
   if(!superpoint->infer(image0, feature_points0)){
-    std::cerr << "Failed when extracting features of image0 !" << std::endl;
+    std::cerr << "Failed when extracting features from first image." << std::endl;
     return 0;
   }
   auto end = std::chrono::high_resolution_clock::now();
@@ -56,7 +56,7 @@ int main(int argc, char** argv){
   std::cout << "Infer First Image Cost " << duration.count() << " MS" << std::endl;
   start = std::chrono::high_resolution_clock::now();
   if(!superpoint->infer(image1, feature_points1)){
-    std::cerr << "Failed when extracting features of image1 !" << std::endl;
+    std::cerr << "Failed when extracting features from second image." << std::endl;
     return 0;
   }
   end = std::chrono::high_resolution_clock::now();
