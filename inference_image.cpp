@@ -4,11 +4,14 @@
 
 #include <memory>
 #include <chrono>
+#include <thread>
 #include "utils.h"
 #include "super_glue.h"
 #include "super_point.h"
 
+
 int main(int argc, char** argv){
+
   if(argc != 5){
     std::cerr << "./superpointglue_image config_path model_dir first_image_absolutely_path second_image_absolutely_path" << std::endl;
     return 0;
@@ -49,14 +52,15 @@ int main(int argc, char** argv){
   }
   std::cout << "SuperPoint and SuperGlue inference engine build success." << std::endl;
 
-  Eigen::Matrix<double, 259, Eigen::Dynamic> feature_points0, feature_points1;
+  Eigen::Matrix<double, 259, Eigen::Dynamic> feature_points0, feature_points1, feature_pointsm;
   std::vector<cv::DMatch> superglue_matches;
 
   double image0_tcount = 0;
   double image1_tcount = 0;
+  double imagem_tcount = 0;
   double match_tcount = 0;
   std::cout << "SuperPoint and SuperGlue test in 100 times." << std::endl;
-  for (int i = 0; i <= 100; ++i){
+  for (int i = 0; i <= 10000; ++i){
     std::cout << "---------------------------------------------------------" << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     if(!superpoint->infer(image0, feature_points0)){
@@ -81,6 +85,21 @@ int main(int argc, char** argv){
       std::cout << "Second image feature points number: " << feature_points1.cols() << std::endl;
       image1_tcount += duration.count();
       std::cout << "Second image infer cost " << image1_tcount / i << " MS" << std::endl;
+    }
+
+    cv::Mat image_merge;
+    cv::hconcat(image0, image1, image_merge);
+    start = std::chrono::high_resolution_clock::now();
+    if(!superpoint->infer(image_merge, feature_pointsm)){
+        std::cerr << "Failed when extracting features from merge image." << std::endl;
+        return 0;
+    }
+    end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    if(i > 0){
+        std::cout << "Merge image feature points number: " << feature_pointsm.cols() << std::endl;
+        imagem_tcount += duration.count();
+        std::cout << "Merge image infer cost " << imagem_tcount / i << " MS" << std::endl;
     }
 
     start = std::chrono::high_resolution_clock::now();
