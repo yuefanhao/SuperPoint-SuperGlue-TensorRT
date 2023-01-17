@@ -39,6 +39,8 @@ target_link_libraries(${PROJECT_NAME}_lib
 
 add_executable(${PROJECT_NAME}_image inference_image.cpp)
 add_executable(${PROJECT_NAME}_sequence inference_sequence.cpp)
+add_executable(${PROJECT_NAME}_multithread inference_multithread.cpp)
 
 target_link_libraries(${PROJECT_NAME}_image ${PROJECT_NAME}_lib)
 target_link_libraries(${PROJECT_NAME}_sequence  ${PROJECT_NAME}_lib)
+target_link_libraries(${PROJECT_NAME}_multithread  ${PROJECT_NAME}_lib)
