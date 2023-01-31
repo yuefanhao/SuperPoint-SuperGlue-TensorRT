@@ -222,12 +222,18 @@ int clip(int val, int max) {
     return std::min(val, max - 1);
 }
 
-void grid_sample(const float *input, std::vector<std::vector<double>> &grid,
-                 std::vector<std::vector<double>> &output, int dim, int h, int w) {
+void grid_sample(const float *input, std::vector<std::vector<int>> &grid,
+                 std::vector<std::vector<double>> &output, int dim, int h, int w, int s) {
     // descriptors 1, 256, image_height/8, image_width/8
     // keypoints 1, 1, number, 2
     // out 1, 256, 1, number
-    for (auto &g : grid) {
+    for (auto &gi : grid) {
+        std::vector<double> g = {gi[0] - s / 2 + 0.5, gi[1] - s / 2 + 0.5};
+        g[0] = g[0] / (w * s - s / 2 - 0.5);
+        g[1] = g[1] / (h * s - s / 2 - 0.5);
+        g[0] = g[0] * 2 - 1;
+        g[1] = g[1] * 2 - 1;    
+        
         double ix = ((g[0] + 1) / 2) * (w - 1);
         double iy = ((g[1] + 1) / 2) * (h - 1);
 
@@ -258,6 +264,9 @@ void grid_sample(const float *input, std::vector<std::vector<double>> &grid,
             float se_val = input[i * h * w + iy_se * w + ix_se];
             descriptor.push_back(nw_val * nw + ne_val * ne + sw_val * sw + se_val * se);
         }
+        double norm_inv = 1.0 / vector_normalize(descriptor.begin(), descriptor.end());
+        std::transform(descriptor.begin(), descriptor.end(), descriptor.begin(),
+                       std::bind1st(std::multiplies<double>(), norm_inv));
         output.push_back(descriptor);
     }
 }
@@ -277,10 +286,10 @@ void normalize_descriptors(std::vector<std::vector<double>> &dest_descriptors) {
 
 void SuperPoint::sample_descriptors(std::vector<std::vector<int>> &keypoints, float *descriptors,
                                     std::vector<std::vector<double>> &dest_descriptors, int dim, int h, int w, int s) {
-    std::vector<std::vector<double>> keypoints_norm;
-    normalize_keypoints(keypoints, keypoints_norm, h, w, s);
-    grid_sample(descriptors, keypoints_norm, dest_descriptors, dim, h, w);
-    normalize_descriptors(dest_descriptors);
+    // std::vector<std::vector<double>> keypoints_norm;
+    // normalize_keypoints(keypoints, keypoints_norm, h, w, s);
+    grid_sample(descriptors, keypoints, dest_descriptors, dim, h, w, s);
+    // normalize_descriptors(dest_descriptors);
 }
 
 bool SuperPoint::process_output(const BufferManager &buffers, Eigen::Matrix<double, 259, Eigen::Dynamic> &features) {
