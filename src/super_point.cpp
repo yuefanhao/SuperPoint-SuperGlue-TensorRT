@@ -222,6 +222,11 @@ int clip(int val, int max) {
     return std::min(val, max - 1);
 }
 
+template<typename Iter_T>
+double vector_normalize(Iter_T first, Iter_T last) {
+    return sqrt(inner_product(first, last, first, 0.0));
+}
+
 void grid_sample(const float *input, std::vector<std::vector<int>> &grid,
                  std::vector<std::vector<double>> &output, int dim, int h, int w, int s) {
     // descriptors 1, 256, image_height/8, image_width/8
@@ -269,11 +274,6 @@ void grid_sample(const float *input, std::vector<std::vector<int>> &grid,
                        std::bind1st(std::multiplies<double>(), norm_inv));
         output.push_back(descriptor);
     }
-}
-
-template<typename Iter_T>
-double vector_normalize(Iter_T first, Iter_T last) {
-    return sqrt(inner_product(first, last, first, 0.0));
 }
 
 void normalize_descriptors(std::vector<std::vector<double>> &dest_descriptors) {
