@@ -47,6 +47,8 @@ make
 ./superpointglue_image  ../config/config.yaml ../weights/ ${PWD}/../image/image0.png ${PWD}/../image/image1.png
 # test on the folder with image sequence, output images will be saved in the param assigned dir
 ./superpointglue_sequence  ../config/config.yaml ../weights/ ${PWD}/../image/freiburg_sequence/ ${PWD}/../image/freiburg_sequence/match_images/
+# test with multi-thread
+./superpointglue_multithread
 ```
 The default image size param is 320x240, if you need to modify the image size in the config file, you should delete the old .engine file in the weights dir.
 
