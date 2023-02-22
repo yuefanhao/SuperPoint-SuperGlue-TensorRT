@@ -102,6 +102,13 @@ bool SuperGlue::build() {
 
     save_engine();
 
+    if (!context_) {
+        context_ = TensorRTUniquePtr<nvinfer1::IExecutionContext>(engine_->createExecutionContext());
+        if (!context_) {
+            return false;
+    }
+    }
+
     ASSERT(network->getNbInputs() == 6);
     keypoints_0_dims_ = network->getInput(0)->getDimensions();
     scores_0_dims_ = network->getInput(1)->getDimensions();
@@ -139,13 +146,6 @@ bool SuperGlue::infer(const Eigen::Matrix<double, 259, Eigen::Dynamic> &features
                       Eigen::VectorXi &indices1,
                       Eigen::VectorXd &mscores0,
                       Eigen::VectorXd &mscores1) {
-    if (!context_) {
-        context_ = TensorRTUniquePtr<nvinfer1::IExecutionContext>(engine_->createExecutionContext());
-        if (!context_) {
-            return false;
-    }
-    }
-
     assert(engine_->getNbBindings() == 7);
 
     const int keypoints_0_index = engine_->getBindingIndex(superglue_config_.input_tensor_names[0].c_str());

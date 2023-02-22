@@ -74,6 +74,14 @@ bool SuperPoint::build() {
         return false;
     }
     save_engine();
+
+    if (!context_) {
+        context_ = TensorRTUniquePtr<nvinfer1::IExecutionContext>(engine_->createExecutionContext());
+        if (!context_) {
+            return false;
+        }
+    }
+
     ASSERT(network->getNbInputs() == 1);
     input_dims_ = network->getInput(0)->getDimensions();
     ASSERT(input_dims_.nbDims == 4);
@@ -102,12 +110,6 @@ bool SuperPoint::construct_network(TensorRTUniquePtr<nvinfer1::IBuilder> &builde
 
 
 bool SuperPoint::infer(const cv::Mat &image, Eigen::Matrix<double, 259, Eigen::Dynamic> &features) {
-    if (!context_) {
-        context_ = TensorRTUniquePtr<nvinfer1::IExecutionContext>(engine_->createExecutionContext());
-        if (!context_) {
-            return false;
-        }
-    }
     
     assert(engine_->getNbBindings() == 3);
 
@@ -171,9 +173,11 @@ void SuperPoint::remove_borders(std::vector<std::vector<int>> &keypoints, std::v
                                 int width) {
     std::vector<std::vector<int>> keypoints_selected;
     std::vector<float> scores_selected;
+    int height_s_border = height - border;
+    int width_s_border = width - border;
     for (int i = 0; i < keypoints.size(); ++i) {
-        bool flag_h = (keypoints[i][0] >= border) && (keypoints[i][0] < (height - border));
-        bool flag_w = (keypoints[i][1] >= border) && (keypoints[i][1] < (width - border));
+        bool flag_h = (keypoints[i][0] >= border) && (keypoints[i][0] < (height_s_border));
+        bool flag_w = (keypoints[i][1] >= border) && (keypoints[i][1] < (width_s_border));
         if (flag_h && flag_w) {
             keypoints_selected.push_back(std::vector<int>{keypoints[i][1], keypoints[i][0]});
             scores_selected.push_back(scores[i]);
@@ -207,10 +211,13 @@ void SuperPoint::top_k_keypoints(std::vector<std::vector<int>> &keypoints, std::
 void
 normalize_keypoints(const std::vector<std::vector<int>> &keypoints, std::vector<std::vector<double>> &keypoints_norm,
                     int h, int w, int s) {
+    double pre_s = s / 2 + 0.5;
+    double pre_ws = 1 / (w * s - s / 2 - 0.5);
+    double pre_hs = 1 / (h * s - s / 2 - 0.5);
     for (auto &keypoint : keypoints) {
-        std::vector<double> kp = {keypoint[0] - s / 2 + 0.5, keypoint[1] - s / 2 + 0.5};
-        kp[0] = kp[0] / (w * s - s / 2 - 0.5);
-        kp[1] = kp[1] / (h * s - s / 2 - 0.5);
+        std::vector<double> kp = {keypoint[0] - pre_s, keypoint[1] - pre_s};
+        kp[0] = kp[0] * pre_ws;
+        kp[1] = kp[1] * pre_hs;
         kp[0] = kp[0] * 2 - 1;
         kp[1] = kp[1] * 2 - 1;
         keypoints_norm.push_back(kp);
@@ -227,9 +234,11 @@ void grid_sample(const float *input, std::vector<std::vector<double>> &grid,
     // descriptors 1, 256, image_height/8, image_width/8
     // keypoints 1, 1, number, 2
     // out 1, 256, 1, number
+    double pre_w = (w - 1) / 2;
+    double pre_h = (h - 1) / 2;
     for (auto &g : grid) {
-        double ix = ((g[0] + 1) / 2) * (w - 1);
-        double iy = ((g[1] + 1) / 2) * (h - 1);
+        double ix = g[0] * pre_w + pre_w;
+        double iy = g[1] * pre_h + pre_h;
 
         int ix_nw = clip(std::floor(ix), w);
         int iy_nw = clip(std::floor(iy), h);
