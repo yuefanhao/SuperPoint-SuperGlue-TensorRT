@@ -48,7 +48,9 @@ from torch import nn
 class MaxPool(nn.Module):
     def __init__(self, nms_radius: int):
         super(MaxPool, self).__init__()
-        self.block = nn.MaxPool2d(kernel_size=nms_radius * 2 + 1, stride=1, padding=nms_radius)
+        self.block = nn.MaxPool2d(
+            kernel_size=nms_radius * 2 + 1, stride=1, padding=nms_radius
+        )
 
     def forward(self, x):
         x = x.unsqueeze(dim=1)
@@ -56,8 +58,8 @@ class MaxPool(nn.Module):
 
 
 def simple_nms(scores, nms_radius: int):
-    """ Fast Non-maximum suppression to remove nearby points """
-    assert (nms_radius >= 0)
+    """Fast Non-maximum suppression to remove nearby points"""
+    assert nms_radius >= 0
 
     # def max_pool(x):
     #     return torch.nn.functional.max_pool2d(
@@ -76,7 +78,7 @@ def simple_nms(scores, nms_radius: int):
 
 
 def remove_borders(keypoints, scores, border: int, height: int, width: int):
-    """ Removes keypoints too close to the border """
+    """Removes keypoints too close to the border"""
     mask_h = (keypoints[:, 0] >= border) & (keypoints[:, 0] < (height - border))
     mask_w = (keypoints[:, 1] >= border) & (keypoints[:, 1] < (width - border))
     mask = mask_h & mask_w
@@ -91,23 +93,28 @@ def top_k_keypoints(keypoints, scores, k: int):
 
 
 def sample_descriptors(keypoints, descriptors, s: int = 8):
-    """ Interpolate descriptors at keypoint locations """
+    """Interpolate descriptors at keypoint locations"""
     b, c, h, w = descriptors.shape
     keypoints = keypoints - s / 2 + 0.5
-    keypoints /= torch.tensor([(w * s - s / 2 - 0.5), (h * s - s / 2 - 0.5)],
-                              ).to(keypoints)[None]
+    keypoints /= torch.tensor(
+        [(w * s - s / 2 - 0.5), (h * s - s / 2 - 0.5)],
+    ).to(
+        keypoints
+    )[None]
     keypoints = keypoints * 2 - 1  # normalize to (-1, 1)
-    args = {'align_corners': True} if int(torch.__version__[2]) > 2 else {}
+    args = {"align_corners": True} if int(torch.__version__[2]) > 2 else {}
     descriptors = torch.nn.functional.grid_sample(
-        descriptors, keypoints.view(b, 1, -1, 2), mode='bilinear', **args)
+        descriptors, keypoints.view(b, 1, -1, 2), mode="bilinear", **args
+    )
     descriptors = torch.nn.functional.normalize(
-        descriptors.reshape(b, c, -1), p=2, dim=1)
+        descriptors.reshape(b, c, -1), p=2, dim=1
+    )
     return descriptors
 
 
 default_config = {
-    'descriptor_dim': 256,
-    'nms_radius': 4,
+    "descriptor_dim": 256,
+    "nms_radius": 4,
 }
 
 
@@ -119,6 +126,7 @@ class SuperPoint(nn.Module):
     Rabinovich. In CVPRW, 2019. https://arxiv.org/abs/1712.07629
 
     """
+
     # default_config = {
     #     'descriptor_dim': 256,
     #     'nms_radius': 4,
@@ -149,8 +157,8 @@ class SuperPoint(nn.Module):
 
         self.convDa = nn.Conv2d(c4, c5, kernel_size=3, stride=1, padding=1)
         self.convDb = nn.Conv2d(
-            c5, default_config['descriptor_dim'],
-            kernel_size=1, stride=1, padding=0)
+            c5, default_config["descriptor_dim"], kernel_size=1, stride=1, padding=0
+        )
 
         # path = Path(__file__).parent / 'weights/superpoint_v1.pth'
         # self.load_state_dict(torch.load(str(path)))
@@ -160,7 +168,7 @@ class SuperPoint(nn.Module):
         #     raise ValueError('\"max_keypoints\" must be positive or \"-1\"')
 
     def forward(self, data):
-        """ Compute keypoints, scores, descriptors for image """
+        """Compute keypoints, scores, descriptors for image"""
         # Shared Encoder
         x = self.relu(self.conv1a(data))
         x = self.relu(self.conv1b(x))
@@ -181,7 +189,7 @@ class SuperPoint(nn.Module):
         b, _, h, w = scores.shape
         scores = scores.permute(0, 2, 3, 1).reshape(b, h, w, 8, 8)
         scores = scores.permute(0, 1, 3, 2, 4).reshape(b, h * 8, w * 8)
-        scores = simple_nms(scores, default_config['nms_radius'])
+        scores = simple_nms(scores, default_config["nms_radius"])
 
         # Extract keypoints
         # keypoints = [
